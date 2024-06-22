@@ -23,15 +23,35 @@ public class OrderEntity {
         return orderID;
     }
 
+    public OrderEntity setOrderID(Long orderID) {
+        this.orderID = orderID;
+        return this;
+    }
+
     public Long getCustomerID() {
         return customerID;
+    }
+
+    public OrderEntity setCustomerID(Long customerID) {
+        this.customerID = customerID;
+        return this;
     }
 
     public BigDecimal getTotal() {
         return total;
     }
 
+    public OrderEntity setTotal(BigDecimal total) {
+        this.total = total;
+        return this;
+    }
+
     public List<OrderItem> getItems() {
         return items;
+    }
+
+    public OrderEntity setItems(List<OrderItem> items) {
+        this.items = items;
+        return this;
     }
 }

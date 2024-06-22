@@ -16,11 +16,26 @@ public class OrderItem {
         return product;
     }
 
+    public OrderItem setProduct(String product) {
+        this.product = product;
+        return this;
+    }
+
     public Integer getQuantity() {
         return quantity;
     }
 
+    public OrderItem setQuantity(Integer quantity) {
+        this.quantity = quantity;
+        return this;
+    }
+
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public OrderItem setPrice(BigDecimal price) {
+        this.price = price;
+        return this;
     }
 }
