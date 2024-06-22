@@ -5,10 +5,14 @@ import br.com.vicente.ordem_ms_desafio_btg.entity.OrderEntity;
 import br.com.vicente.ordem_ms_desafio_btg.entity.OrderItem;
 import br.com.vicente.ordem_ms_desafio_btg.listener.dto.OrderCreatedEvent;
 import br.com.vicente.ordem_ms_desafio_btg.repository.OrderRepository;
+import org.bson.Document;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,9 +20,12 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final MongoTemplate mongoTemplate;
 
-    public OrderService(OrderRepository orderRepository) {
+
+    public OrderService(OrderRepository orderRepository, MongoTemplate mongoTemplate) {
         this.orderRepository = orderRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public Page<OrderResponse> findAllByCustomerID (Long customerID, PageRequest pageRequest){
@@ -34,6 +41,16 @@ public class OrderService {
         orderEntity.setTotal(getTotal(orderCreatedEvent));
 
         orderRepository.save(orderEntity);
+    }
+
+    public BigDecimal findTotalOnOrdersByCustomerID(Long customerID){
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("customerID").is(customerID)),
+                Aggregation.group().sum("total").as("total")
+        );
+        AggregationResults<Document> response = mongoTemplate.aggregate(aggregation, "tb_orders", Document.class);
+
+        return new BigDecimal(response.getUniqueMappedResult().get("total").toString());
     }
 
     private BigDecimal getTotal(OrderCreatedEvent orderCreatedEvent) {
