@@ -1,9 +1,12 @@
 package br.com.vicente.ordem_ms_desafio_btg.service;
 
+import br.com.vicente.ordem_ms_desafio_btg.controller.dto.OrderResponse;
 import br.com.vicente.ordem_ms_desafio_btg.entity.OrderEntity;
 import br.com.vicente.ordem_ms_desafio_btg.entity.OrderItem;
 import br.com.vicente.ordem_ms_desafio_btg.listener.dto.OrderCreatedEvent;
 import br.com.vicente.ordem_ms_desafio_btg.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,6 +19,11 @@ public class OrderService {
 
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    public Page<OrderResponse> findAllByCustomerID (Long customerID, PageRequest pageRequest){
+        Page<OrderEntity> allByCustomerID = orderRepository.findAllByCustomerID(customerID, pageRequest);
+        return allByCustomerID.map(OrderResponse::from);
     }
 
     public void save(OrderCreatedEvent orderCreatedEvent){
